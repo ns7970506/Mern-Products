@@ -6,7 +6,7 @@ const connectDB = require('./config/db')
 
 const authRoutes = require('./routes/auth')
 const eventRoutes = require('./routes/event')
-
+const bookingRoutes = require('./routes/booking')
 dotenv.config()
 
 
@@ -18,6 +18,7 @@ app.use(express.json())
 // Routes
 app.use('/api/auth',authRoutes)
 app.use('/api/events',eventRoutes)
+app.use('/api/booking',bookingRoutes)
 
 const PORT = process.env.PORT || 5000
 
