@@ -15,20 +15,20 @@ const generateToken =(id, role)=>{
 const register = async(req, res)=>{
     try{
         const {name , email, password, role} = req.body;
-        let user = await User.findOne({email})
+         const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : '';
+        let user = await User.findOne({email: normalizedEmail})
 
-        
-            if(user)
-             return res.status(400).json({ message :'User already exists'})
+        if(user)
+            return res.status(400).json({ message :'User already exists'})
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password,salt);
 
-        user = User.create({
+        user = await User.create({
             name,
-            email,
+            email: normalizedEmail,
             password:hashedPassword,
-            role:'user',
+            role: 'user' ,
             isVerified:false
         })
 
@@ -42,6 +42,9 @@ const register = async(req, res)=>{
         })
     }
     catch(error){
+        if (error.code === 11000) {
+            return res.status(400).json({ message: 'User already exists' })
+        }
         res.status(500).json({message:'Server Error', error:error.message})
     }
     
